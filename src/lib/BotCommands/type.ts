@@ -1,37 +1,36 @@
+import { Message } from "discord.js";
+
 export interface ICommandPermission {
 	users?: Array<string>;
 	roles?: Array<string>;
 	categories?: Array<string>;
 	channels?: Array<string>;
 }
-
 export interface ICommandOption {
+	enable?: boolean;
 	aliases?: Array<string>;
 	minArgumentCount?: number;
 	usage?: string;
 	description?: string;
 	showHelp?: boolean;
+	permissions?: ICommandPermission;
 }
 
-export default class Command {
+export class Command {
 	name: string;
+	excute: (message: Message, args: Array<string>) => void;
 	options: ICommandOption;
-	permissions: ICommandPermission;
 
-	constructor (_name: string, _options?: ICommandOption, _permissions?: ICommandPermission) {
+	constructor (_name: string, _excute: (message: Message, args: Array<string>) => void, _options?: ICommandOption) {
 		this.name = _name;
+		this.excute = _excute;
 		this.options = _options || {
+			"enable": true,
 			"aliases": [],
 			"minArgumentCount": 0,
 			"usage": "",
 			"description": "",
 			"showHelp": true
-		};
-		this.permissions = _permissions || {
-			"users": [],
-			"roles": [],
-			"categories": [],
-			"channels": []
 		};
 	}
 }
