@@ -1,4 +1,5 @@
 node_modules
-src/lib/GuildData/*.json
 
-/config.json
+.env
+
+src/lib/GuildData/*.json
