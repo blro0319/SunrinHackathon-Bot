@@ -1,12 +1,13 @@
 import bot from './bot';
 import { Message, Presence } from 'discord.js';
+import CommandManager from './lib/Plugins/CommandManager';
 
 // On ready
 bot.client.on("ready", () => {
 	// Set status
 	bot.client.user.setActivity({
 		type: "PLAYING",
-		name: ":video_game: 선린해커톤"
+		name: ">help로 도움말 보기"
 	}).then((value: Presence) => {
 		console.log(`[Bot][init] Set activity: ${value.activities[0].name}`);
 	}).catch(console.error);
@@ -17,6 +18,8 @@ bot.client.on("ready", () => {
 
 // On message
 bot.client.on("message", (message: Message) => {
+	if (message.author.bot) return;
+	CommandManager.excute(message);
 });
 
 bot.login();
