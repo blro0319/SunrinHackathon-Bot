@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const config_json_1 = require("./config.json");
-const Commands_1 = require("../../Commands");
+const Commands_1 = require("../../lib/Commands");
+const __1 = require("../..");
 class CommandManager {
     excute(message) {
         this.message = message;
@@ -11,8 +12,11 @@ class CommandManager {
         }
         this.getArgs();
         this.getCommand();
-        if (!this.command || !this.checkPermission) {
+        if (!this.command || !this.checkPermission()) {
             this.message = this.cmdName = this.cmdArgs = this.command = null;
+            return;
+        }
+        if (!this.checkArgs()) {
             return;
         }
         this.command.excute(this.message, this.cmdArgs);
@@ -35,60 +39,73 @@ class CommandManager {
     checkPermission() {
         let cmd = `\`${config_json_1.prefix}${this.cmdName}\``;
         if (!this.checkGuild()) {
-            this.message.reply(`\`${this.message.guild.name}\` 서버에서는 \`${cmd}\` 명령을 실행할 수 없습니다!`);
+            __1.replyMessage(this.message, `\`${this.message.guild.name}\` 서버에서는 \`${cmd}\` 명령을 실행할 수 없습니다!`);
             return false;
         }
         if (!this.checkCategory()) {
-            this.message.reply(`\`${this.message.channel.parent.name}\` 카테고리에서는 \`${cmd}\` 명령을 실행할 수 없습니다!`);
+            __1.replyMessage(this.message, `\`${this.message.channel.parent.name}\` 카테고리에서는 \`${cmd}\` 명령을 실행할 수 없습니다!`);
             return false;
         }
         if (!this.checkChannel()) {
-            this.message.reply(`\`${this.message.channel.name}\` 채널에서는 ${cmd} 명령을 실행할 수 없습니다!`);
+            __1.replyMessage(this.message, `\`${this.message.channel.name}\` 채널에서는 ${cmd} 명령을 실행할 수 없습니다!`);
             return false;
         }
         if (!this.checkRole() && this.checkUser()) {
-            this.message.reply(`${cmd} 명령을 실행할 권한이 없습니다!`);
+            __1.replyMessage(this.message, `${cmd} 명령을 실행할 권한이 없습니다!`);
             return false;
         }
-        this.command.excute(this.message, this.cmdArgs);
+        return true;
+    }
+    checkArgs() {
+        if (this.cmdArgs.length < this.command.options.minArgumentCount) {
+            __1.replyMessage(this.message, `\`${config_json_1.prefix}${this.cmdName}\` 명령에 실행에 필요한 인자가 부족합니다!`);
+            return false;
+        }
+        return true;
     }
     // Permission functions
     checkGuild() {
-        let guilds = this.command.options.permissions.guilds;
+        var _a;
+        let guilds = ((_a = this.command.options.permissions) === null || _a === void 0 ? void 0 : _a.guilds) || [];
         if (guilds.length <= 0 || guilds.includes(this.message.guild.id)) {
             return true;
         }
         return false;
     }
     checkCategory() {
+        var _a;
+        let categories = ((_a = this.command.options.permissions) === null || _a === void 0 ? void 0 : _a.categories) || [];
         let category = this.message.channel.parentID;
-        let categories = this.command.options.permissions.categories;
         if (categories.length <= 0 || categories.includes(category)) {
             return true;
         }
         return false;
     }
     checkChannel() {
-        let channels = this.command.options.permissions.channels;
+        var _a;
+        let channels = ((_a = this.command.options.permissions) === null || _a === void 0 ? void 0 : _a.channels) || [];
         if (channels.length <= 0 || channels.includes(this.message.channel.id)) {
             return true;
         }
         return false;
     }
     checkRole() {
-        let roles = this.command.options.permissions.roles;
+        var _a;
+        let roles = ((_a = this.command.options.permissions) === null || _a === void 0 ? void 0 : _a.roles) || [];
         if (roles.length <= 0)
             return true;
         for (let role in roles) {
-            if (this.message.member.roles.cache.some((userRole) => {
-                return userRole.id === role;
-            }))
+            if (this.message.author.id === this.message.guild.ownerID ||
+                this.message.member.roles.cache.some((userRole) => {
+                    return userRole.id === roles[role];
+                }))
                 return true;
         }
         return false;
     }
     checkUser() {
-        let users = this.command.options.permissions.users;
+        var _a;
+        let users = ((_a = this.command.options.permissions) === null || _a === void 0 ? void 0 : _a.users) || [];
         let user = this.message.author.id;
         if (users.length <= 0 ||
             users.includes(user) ||

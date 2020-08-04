@@ -11,7 +11,14 @@ class Command {
             "minArgumentCount": 0,
             "usage": "",
             "description": "",
-            "showHelp": true
+            "showHelp": true,
+            "permissions": {
+                guilds: [],
+                categories: [],
+                channels: [],
+                roles: [],
+                users: []
+            }
         };
     }
 }
