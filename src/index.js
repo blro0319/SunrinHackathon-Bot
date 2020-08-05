@@ -1,6 +1,15 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserFromMention = exports.replyMessage = void 0;
+exports.getRoleFromMention = exports.getUserFromMention = exports.replyMessage = void 0;
 const bot_1 = require("./bot");
 const CommandManager_1 = require("./Components/CommandManager");
 const teams = require("./lib/Teams/teams.json");
@@ -55,8 +64,15 @@ function detectAddMember(member) {
     member.roles.add(guildRoles.find(value => value.name === teamData.type));
     member.roles.add(guildRoles.find(value => value.name === userData.role));
 }
+// Custom message reply
 function replyMessage(message, content) {
-    message.channel.send(`> ${message.content.replace(/\n/g, "\n> ")}\n${message.author} ${content}`);
+    return __awaiter(this, void 0, void 0, function* () {
+        let result;
+        yield message.channel.send(`> ${message.content.replace(/\n/g, "\n> ")}\n${message.author} ${content}`).then(value => {
+            result = value;
+        });
+        return result;
+    });
 }
 exports.replyMessage = replyMessage;
 // Get user by mention
@@ -72,4 +88,14 @@ function getUserFromMention(mention) {
     }
 }
 exports.getUserFromMention = getUserFromMention;
+// Get role by mention
+function getRoleFromMention(guild, mention) {
+    if (!mention)
+        return;
+    if (mention.startsWith("<@&") && mention.endsWith(">")) {
+        mention = mention.slice(3, -1);
+    }
+    return guild.roles.cache.get(mention);
+}
+exports.getRoleFromMention = getRoleFromMention;
 //# sourceMappingURL=index.js.map

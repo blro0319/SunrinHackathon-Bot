@@ -1,5 +1,5 @@
 import bot from './bot';
-import { Message, Presence, GuildMember, User } from 'discord.js';
+import { Message, Presence, GuildMember, User, MessageReaction, Role, Guild, Channel } from 'discord.js';
 import CommandManager from './Components/CommandManager';
 import teams = require("./lib/Teams/teams.json");
 import roles = require("./lib/GuildData/Roles.json");
@@ -59,9 +59,16 @@ function detectAddMember(member: GuildMember) {
 	member.roles.add(guildRoles.find(value => value.name === teamData.type))
 	member.roles.add(guildRoles.find(value => value.name === userData.role));
 }
-export function replyMessage(message: Message, content: string) {
-	message.channel.send(`> ${message.content.replace(/\n/g, "\n> ")}\n${message.author} ${content}`);
+
+// Custom message reply
+export async function replyMessage(message: Message, content: string): Promise<Message> {
+	let result: Message;
+	await message.channel.send(`> ${message.content.replace(/\n/g, "\n> ")}\n${message.author} ${content}`).then(value => {
+		result = value;
+	});
+	return result;
 }
+
 // Get user by mention
 export function getUserFromMention(mention: string): User {
 	if (!mention) return;
@@ -75,4 +82,13 @@ export function getUserFromMention(mention: string): User {
 
 		return bot.client.users.cache.get(mention);
 	}
+}
+// Get role by mention
+export function getRoleFromMention(guild: Guild, mention: string): Role {
+	if (!mention) return;
+
+	if (mention.startsWith("<@&") && mention.endsWith(">")) {
+		mention = mention.slice(3, -1);
+	}
+	return guild.roles.cache.get(mention);
 }

@@ -29,6 +29,23 @@ exports.default = new type_1.Command("point", (message, args) => {
             }
             args[1] = team;
         }
+        else {
+            let role = __1.getRoleFromMention(message.guild, args[1]);
+            if (role) {
+                let team = "";
+                for (let i in teams) {
+                    if (teams[i].name === role.name) {
+                        team = teams[i].name;
+                        break;
+                    }
+                }
+                if (team == "") {
+                    __1.replyMessage(message, `${args[1]} 역할은 팀이 아닙니다!`);
+                    return;
+                }
+                args[1] = team;
+            }
+        }
         // Check set or add
         switch (args[0]) {
             case "set":
@@ -69,7 +86,7 @@ exports.default = new type_1.Command("point", (message, args) => {
     showHelp: true,
     usage: '<"set"|"add"> <대상|멘션|"."> <HP>',
     permissions: {
-        roles: [roles.staff]
+        roles: [roles.admin, roles.staff]
     }
 });
 //# sourceMappingURL=point.js.map

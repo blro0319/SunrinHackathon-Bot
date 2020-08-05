@@ -42,18 +42,8 @@ class PointManager {
 		}
 	}
 	private saveData() {
-		FileSystem.writeFileSync("./src/Components/PointManager/data.json", this.dataToString());
+		FileSystem.writeFileSync("./src/Components/PointManager/data.json", JSON.stringify(this.data));
 		this.loadData();
-	}
-	private dataToString(): string {
-		let result = "{\n";
-		let keys = Object.keys(this.data);
-		for (let i = 0; i < keys.length; i++) {
-			result += `\t"${keys[i]}": ${this.data[keys[i]]}`;
-			if (i != keys.length - 1) result += ",\n";
-			else result += "\n";
-		}
-		return result + "}";
 	}
 }
 export default new PointManager();

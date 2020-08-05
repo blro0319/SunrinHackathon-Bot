@@ -1,7 +1,7 @@
 import { Command } from "../type";
 import { Message } from "discord.js";
 import PointManager from "../../../Components/PointManager";
-import { getUserFromMention, replyMessage } from "../../..";
+import { getUserFromMention, replyMessage, getRoleFromMention } from "../../..";
 import teams = require("../../Teams/teams.json");
 import roles = require("../../GuildData/Roles.json");
 
@@ -28,6 +28,22 @@ export default new Command("point", (message: Message, args: string[]) => {
 				return;
 			}
 			args[1] = team;
+		} else {
+			let role = getRoleFromMention(message.guild, args[1]);
+			if (role) {
+				let team: string = "";
+				for (let i in teams) {
+					if (teams[i].name === role.name) {
+						team = teams[i].name;
+						break;
+					}
+				}
+				if (team == "") {
+					replyMessage(message, `${args[1]} 역할은 팀이 아닙니다!`);
+					return;
+				}
+				args[1] = team;
+			}
 		}
 		// Check set or add
 		switch (args[0]) {
@@ -69,6 +85,6 @@ export default new Command("point", (message: Message, args: string[]) => {
 	showHelp: true,
 	usage: '<"set"|"add"> <대상|멘션|"."> <HP>',
 	permissions: {
-		roles: [roles.staff]
+		roles: [roles.admin, roles.staff]
 	}
 });

@@ -17,7 +17,7 @@ export default new Command("help", (message: Message, args: string[]) => {
 		message.channel.send(getCommandUsage(helpCmd));
 	}
 	else {
-		let msg = `>> 명령어 목록\n\`[]\`: 선택 인자 / \`<>\`: 필수 인자\n\n`;
+		let msg = `**명령어 목록**\n\`[]\`: 선택 인자 / \`<>\`: 필수 인자\n\n`;
 		CommnadList.forEach((cmd) => {
 			msg += getCommandUsage(cmd);
 		});
