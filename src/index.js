@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRoleFromMention = exports.getUserFromMention = exports.replyMessage = void 0;
+exports.getTeamFromMention = exports.getRoleFromMention = exports.getUserFromMention = exports.getMemberFromUser = exports.replyMessage = void 0;
 const bot_1 = require("./bot");
 const CommandManager_1 = require("./Components/CommandManager");
 const teams = require("./lib/Teams/teams.json");
@@ -75,6 +75,11 @@ function replyMessage(message, content) {
     });
 }
 exports.replyMessage = replyMessage;
+// Get member by user
+function getMemberFromUser(guild, user) {
+    return guild.members.cache.find((member) => member.id === user.id);
+}
+exports.getMemberFromUser = getMemberFromUser;
 // Get user by mention
 function getUserFromMention(mention) {
     if (!mention)
@@ -98,4 +103,25 @@ function getRoleFromMention(guild, mention) {
     return guild.roles.cache.get(mention);
 }
 exports.getRoleFromMention = getRoleFromMention;
+// Get team by mention
+function getTeamFromMention(guild, mention) {
+    let user = getUserFromMention(mention);
+    if (user) {
+        for (let i in teams) {
+            if (teams[i].members.find(value => value.tag === user.tag)) {
+                return teams[i];
+            }
+        }
+    }
+    let role = getRoleFromMention(guild, mention);
+    if (role) {
+        for (let i in teams) {
+            if (teams[i].name === role.name) {
+                return teams[i];
+            }
+        }
+    }
+    return null;
+}
+exports.getTeamFromMention = getTeamFromMention;
 //# sourceMappingURL=index.js.map

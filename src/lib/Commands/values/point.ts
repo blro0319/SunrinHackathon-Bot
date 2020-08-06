@@ -8,7 +8,7 @@ import roles = require("../../GuildData/Roles.json");
 export default new Command("point", (message: Message, args: string[]) => {
 	let point = Number(args[2]);
 	if (point != 0 && !point) {
-		replyMessage(message, `\`${args[2]}\`은 알맞은 형식의 인자가 아닙니다. 포인트는 숫자입니다!`);
+		replyMessage(message, `\`${args[2]}\` 인자는 알맞은 형식이 아닙니다. 포인트는 숫자입니다!`);
 		return;
 	}
 	// Single
@@ -48,10 +48,13 @@ export default new Command("point", (message: Message, args: string[]) => {
 		// Check set or add
 		switch (args[0]) {
 			case "set":
+			case "설정":
+			case "변경":
 				PointManager.setPoint(args[1], point);
 				replyMessage(message, `\`${args[1]}\`의 HP를 \`${point}HP\`로 설정했습니다!`);
 				break;
 			case "add":
+			case "추가":
 				PointManager.addPoint(args[1], point);
 				replyMessage(message, `\`${args[1]}\`의 HP에 \`${point}HP\`를 더해 \`${PointManager.getPoint(args[1])}HP\` 설정했습니다!`);
 				break;
@@ -83,7 +86,7 @@ export default new Command("point", (message: Message, args: string[]) => {
 	enable: true,
 	minArgumentCount: 3,
 	showHelp: true,
-	usage: '<"set"|"add"> <대상|멘션|"."> <HP>',
+	usage: '<"set"|"설정"|"변경"|"add"|"추가"> <대상|멘션|"."> <HP>',
 	permissions: {
 		roles: [roles.admin, roles.staff]
 	}

@@ -3,6 +3,7 @@ import { Message, Presence, GuildMember, User, MessageReaction, Role, Guild, Cha
 import CommandManager from './Components/CommandManager';
 import teams = require("./lib/Teams/teams.json");
 import roles = require("./lib/GuildData/Roles.json");
+import { ITeam, IMember } from './lib/Teams/type';
 
 // Bot init //
 // On ready
@@ -39,8 +40,8 @@ function detectAddMember(member: GuildMember) {
 	console.log(`[Guild][user] Add: ${member.user.tag}`);
 
 	// Get data
-	let teamData: { name: string, type: string, members: { name: string, role: string, tag: string }[] };
-	let userData: { name: string, role: string, tag: string };
+	let teamData: ITeam;
+	let userData: IMember;
 	for (let i in teams) {
 		userData = teams[i].members.find(value => value.tag === member.user.tag);
 		if (userData) {
@@ -69,6 +70,11 @@ export async function replyMessage(message: Message, content: string): Promise<M
 	return result;
 }
 
+// Get member by user
+export function getMemberFromUser(guild: Guild, user: User): GuildMember {
+	return guild.members.cache.find((member) => member.id === user.id);
+}
+
 // Get user by mention
 export function getUserFromMention(mention: string): User {
 	if (!mention) return;
@@ -91,4 +97,25 @@ export function getRoleFromMention(guild: Guild, mention: string): Role {
 		mention = mention.slice(3, -1);
 	}
 	return guild.roles.cache.get(mention);
+}
+
+// Get team by mention
+export function getTeamFromMention(guild: Guild, mention: string): ITeam {
+	let user = getUserFromMention(mention);
+	if (user) {
+		for (let i in teams) {
+			if (teams[i].members.find(value => value.tag === user.tag)) {
+				return teams[i];
+			}
+		}
+	}
+	let role = getRoleFromMention(guild, mention);
+	if (role) {
+		for (let i in teams) {
+			if (teams[i].name === role.name) {
+				return teams[i];
+			}
+		}
+	}
+	return null;
 }
