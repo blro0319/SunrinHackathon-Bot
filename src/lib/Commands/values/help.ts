@@ -6,6 +6,7 @@ import { replyMessage } from "../../..";
 
 export default new Command("help", (message: Message, args: string[]) => {
 	if (args.length) {
+		args[0] = args[0].toLowerCase();
 		if (args[0].startsWith(prefix)) args[0] = args[0].slice(prefix.length);
 		let helpCmd = CommnadList.get(args[0]) || CommnadList.find((cmd) => {
 			return cmd.options.aliases.length && cmd.options.aliases.includes(args[0]);
@@ -29,11 +30,14 @@ export default new Command("help", (message: Message, args: string[]) => {
 	enable: true,
 	minArgumentCount: 0,
 	showHelp: true,
-	usage: "[명령어]"
+	usage: ["[명령어]"]
 });
 
 export function getCommandUsage(command: Command): string {
-	let usage = `\`${prefix}${command.name} ${command.options.usage}\`\n`;
+	let usage = "";
+	command.options.usage.forEach((value) => {
+		usage += `\`${prefix}${command.name} ${value}\`\n`;
+	});
 	if (command.options.aliases.length) {
 		usage += "별명: `";
 		for (let i = 0; i < command.options.aliases.length; i++) {

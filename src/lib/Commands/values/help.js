@@ -7,6 +7,7 @@ const config_json_1 = require("../../../Components/CommandManager/config.json");
 const __2 = require("../../..");
 exports.default = new type_1.Command("help", (message, args) => {
     if (args.length) {
+        args[0] = args[0].toLowerCase();
         if (args[0].startsWith(config_json_1.prefix))
             args[0] = args[0].slice(config_json_1.prefix.length);
         let helpCmd = __1.CommnadList.get(args[0]) || __1.CommnadList.find((cmd) => {
@@ -31,10 +32,13 @@ exports.default = new type_1.Command("help", (message, args) => {
     enable: true,
     minArgumentCount: 0,
     showHelp: true,
-    usage: "[명령어]"
+    usage: ["[명령어]"]
 });
 function getCommandUsage(command) {
-    let usage = `\`${config_json_1.prefix}${command.name} ${command.options.usage}\`\n`;
+    let usage = "";
+    command.options.usage.forEach((value) => {
+        usage += `\`${config_json_1.prefix}${command.name} ${value}\`\n`;
+    });
     if (command.options.aliases.length) {
         usage += "별명: `";
         for (let i = 0; i < command.options.aliases.length; i++) {

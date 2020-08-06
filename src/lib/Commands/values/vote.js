@@ -13,7 +13,7 @@ const type_1 = require("../type");
 const discord_js_1 = require("discord.js");
 const __1 = require("../../..");
 exports.default = new type_1.Command("vote", (message, args) => {
-    switch (args[0]) {
+    switch (args[0].toLowerCase()) {
         case "create":
         case "생성":
         case "만들기":
@@ -29,7 +29,7 @@ exports.default = new type_1.Command("vote", (message, args) => {
     enable: true,
     minArgumentCount: 2,
     showHelp: true,
-    usage: `<"create"|"생성"|"만들기"> <이름>`,
+    usage: ['<"create"|"생성"|"만들기"> <이름>'],
     permissions: {
         roles: []
     }

@@ -9,7 +9,7 @@ class Command {
             "enable": true,
             "aliases": [],
             "minArgumentCount": 0,
-            "usage": "",
+            "usage": [""],
             "description": "",
             "showHelp": true,
             "permissions": {

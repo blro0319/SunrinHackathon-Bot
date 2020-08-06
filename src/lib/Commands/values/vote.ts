@@ -25,7 +25,7 @@ export interface IVoteResult {
 }
 
 export default new Command("vote", (message: Message, args: string[]) => {
-	switch (args[0]) {
+	switch (args[0].toLowerCase()) {
 		case "create":
 		case "생성":
 		case "만들기":
@@ -41,7 +41,7 @@ export default new Command("vote", (message: Message, args: string[]) => {
 	enable: true,
 	minArgumentCount: 2,
 	showHelp: true,
-	usage: `<"create"|"생성"|"만들기"> <이름>`,
+	usage: ['<"create"|"생성"|"만들기"> <이름>'],
 	permissions: {
 		roles: []
 	}

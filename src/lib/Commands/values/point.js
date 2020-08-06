@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getScore = void 0;
 const type_1 = require("../type");
 const discord_js_1 = require("discord.js");
 const PointManager_1 = require("../../../Components/PointManager");
 const __1 = require("../../..");
-const teams = require("../../Teams/teams.json");
 const roles = require("../../GuildData/Roles.json");
 exports.default = new type_1.Command("point", (message, args) => {
-    switch (args[0]) {
+    switch (args[0].toLowerCase()) {
         case "set":
         case "설정":
         case "변경":
@@ -27,11 +27,15 @@ exports.default = new type_1.Command("point", (message, args) => {
     }
 }, {
     aliases: ["hp", "score", "포인트", "체력", "점수"],
-    description: "팀의 HP를 조절합니다.",
+    description: "팀의 HP를 조절거나 봅니다. 스태프 이상만 사용할 수 있습니다.",
     enable: true,
     minArgumentCount: 2,
     showHelp: true,
-    usage: '<"set"|"설정"|"변경"|"add"|"추가"|"get"|"보기"> <대상|멘션|"."> <HP>',
+    usage: [
+        '<"set"|"설정"|"변경"> <HP>',
+        '<"add"|"추가"> <HP>',
+        '<"get"|"보기">'
+    ],
     permissions: {
         roles: [roles.admin, roles.staff]
     }
@@ -49,38 +53,11 @@ function setScore(message, target, point) {
     // Single
     else {
         // Check mention
-        let user = __1.getUserFromMention(target);
-        if (user) {
-            let team = "";
-            for (let i in teams) {
-                if (teams[i].members.find(value => value.tag === user.tag)) {
-                    team = teams[i].name;
-                    break;
-                }
-            }
-            if (team == "") {
-                __1.replyMessage(message, `${target} 님은 팀이 없습니다!`);
-                return;
-            }
-            target = team;
+        if (__1.getTeamFromMention(message, target) != null) {
+            target = __1.getTeamFromMention(message, target).name;
         }
-        else {
-            let role = __1.getRoleFromMention(message.guild, target);
-            if (role) {
-                let team = "";
-                for (let i in teams) {
-                    if (teams[i].name === role.name) {
-                        team = teams[i].name;
-                        break;
-                    }
-                }
-                if (team == "") {
-                    __1.replyMessage(message, `${target} 역할은 팀이 아닙니다!`);
-                    return;
-                }
-                target = team;
-            }
-        }
+        if (__1.isMention(target))
+            return;
         PointManager_1.default.setPoint(target, Number(point));
         __1.replyMessage(message, `\`${target}\`의 HP를 \`${__1.numberFormat(Number(point))}HP\`로 설정했습니다!`);
         getScore(message, target);
@@ -99,38 +76,11 @@ function addScore(message, target, point) {
     // Single
     else {
         // Check mention
-        let user = __1.getUserFromMention(target);
-        if (user) {
-            let team = "";
-            for (let i in teams) {
-                if (teams[i].members.find(value => value.tag === user.tag)) {
-                    team = teams[i].name;
-                    break;
-                }
-            }
-            if (team == "") {
-                __1.replyMessage(message, `${target} 님은 팀이 없습니다!`);
-                return;
-            }
-            target = team;
+        if (__1.getTeamFromMention(message, target) != null) {
+            target = __1.getTeamFromMention(message, target).name;
         }
-        else {
-            let role = __1.getRoleFromMention(message.guild, target);
-            if (role) {
-                let team = "";
-                for (let i in teams) {
-                    if (teams[i].name === role.name) {
-                        team = teams[i].name;
-                        break;
-                    }
-                }
-                if (team == "") {
-                    __1.replyMessage(message, `${target} 역할은 팀이 아닙니다!`);
-                    return;
-                }
-                target = team;
-            }
-        }
+        if (__1.isMention(target))
+            return;
         PointManager_1.default.addPoint(target, Number(point));
         __1.replyMessage(message, `\`${target}\`의 HP에 \`${__1.numberFormat(Number(point))}HP\`를 더해 \`${__1.numberFormat(PointManager_1.default.getPoint(target))}HP\`로 설정했습니다!`);
         getScore(message, target);
@@ -138,38 +88,11 @@ function addScore(message, target, point) {
 }
 function getScore(message, target) {
     // Check mention
-    let user = __1.getUserFromMention(target);
-    if (user) {
-        let team = "";
-        for (let i in teams) {
-            if (teams[i].members.find(value => value.tag === user.tag)) {
-                team = teams[i].name;
-                break;
-            }
-        }
-        if (team == "") {
-            __1.replyMessage(message, `${target} 님은 팀이 없습니다!`);
-            return;
-        }
-        target = team;
+    if (__1.getTeamFromMention(message, target) != null) {
+        target = __1.getTeamFromMention(message, target).name;
     }
-    else {
-        let role = __1.getRoleFromMention(message.guild, target);
-        if (role) {
-            let team = "";
-            for (let i in teams) {
-                if (teams[i].name === role.name) {
-                    team = teams[i].name;
-                    break;
-                }
-            }
-            if (team == "") {
-                __1.replyMessage(message, `${target} 역할은 팀이 아닙니다!`);
-                return;
-            }
-            target = team;
-        }
-    }
+    if (__1.isMention(target))
+        return;
     // Send result
     let point = PointManager_1.default.getPoint(target);
     message.channel.send(new discord_js_1.MessageEmbed()
@@ -177,4 +100,5 @@ function getScore(message, target) {
         .setTitle(`${target}의 HP`)
         .addField(PointManager_1.default.pointToIcon(point), `${__1.numberFormat(point)}HP`));
 }
+exports.getScore = getScore;
 //# sourceMappingURL=point.js.map

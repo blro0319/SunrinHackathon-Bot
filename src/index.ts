@@ -75,6 +75,11 @@ export function getMemberFromUser(guild: Guild, user: User): GuildMember {
 	return guild.members.cache.find((member) => member.id === user.id);
 }
 
+// Is mention
+export function isMention(str: string) {
+	return str.startsWith("<@") && str.endsWith(">");
+}
+
 // Get user by mention
 export function getUserFromMention(mention: string): User {
 	if (!mention) return;
@@ -100,7 +105,7 @@ export function getRoleFromMention(guild: Guild, mention: string): Role {
 }
 
 // Get team by mention
-export function getTeamFromMention(guild: Guild, mention: string): ITeam {
+export function getTeamFromMention(message: Message, mention: string): ITeam {
 	let user = getUserFromMention(mention);
 	if (user) {
 		for (let i in teams) {
@@ -108,14 +113,16 @@ export function getTeamFromMention(guild: Guild, mention: string): ITeam {
 				return teams[i];
 			}
 		}
+		replyMessage(message, `${mention} 님은 팀이 없습니다!`);
 	}
-	let role = getRoleFromMention(guild, mention);
+	let role = getRoleFromMention(message.guild, mention);
 	if (role) {
 		for (let i in teams) {
 			if (teams[i].name === role.name) {
 				return teams[i];
 			}
 		}
+		replyMessage(message, `${mention} 역할은 팀이 아닙니다!`);
 	}
 	return null;
 }

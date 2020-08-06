@@ -11,7 +11,7 @@ export interface ICommandOption {
 	enable?: boolean;
 	aliases?: string[];
 	minArgumentCount?: number;
-	usage?: string;
+	usage?: string[];
 	description?: string;
 	showHelp?: boolean;
 	permissions?: ICommandPermission;
@@ -29,7 +29,7 @@ export class Command {
 			"enable": true,
 			"aliases": [],
 			"minArgumentCount": 0,
-			"usage": "",
+			"usage": [""],
 			"description": "",
 			"showHelp": true,
 			"permissions": {
