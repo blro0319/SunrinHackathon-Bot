@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTeamFromMention = exports.getRoleFromMention = exports.getUserFromMention = exports.getMemberFromUser = exports.replyMessage = void 0;
+exports.numberFormat = exports.getTeamFromMention = exports.getRoleFromMention = exports.getUserFromMention = exports.getMemberFromUser = exports.replyMessage = void 0;
 const bot_1 = require("./bot");
 const CommandManager_1 = require("./Components/CommandManager");
 const teams = require("./lib/Teams/teams.json");
@@ -124,4 +124,9 @@ function getTeamFromMention(guild, mention) {
     return null;
 }
 exports.getTeamFromMention = getTeamFromMention;
+// Number format
+function numberFormat(num) {
+    return num.toString().replace(/\d(?=(\d{3})+$)/g, "$&,");
+}
+exports.numberFormat = numberFormat;
 //# sourceMappingURL=index.js.map

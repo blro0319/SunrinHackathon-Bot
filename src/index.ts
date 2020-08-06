@@ -119,3 +119,8 @@ export function getTeamFromMention(guild: Guild, mention: string): ITeam {
 	}
 	return null;
 }
+
+// Number format
+export function numberFormat(num: number): string {
+	return num.toString().replace(/\d(?=(\d{3})+$)/g, "$&,");
+}

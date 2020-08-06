@@ -31,7 +31,26 @@ class PointManager {
 		}
 	}
 	getPoint(target: string): number {
+		if (this.data[target] == undefined) return 0;
 		return this.data[target];
+	}
+
+	pointToIcon(point: number): string {
+		let rating = ["⭐", "🤍", "💜", "💙", "💚", "💛", "🧡", "❤️"];
+		let pStr = point.toString();
+		if (pStr.length > rating.length) return "💠";
+
+		let result = "";
+		let lv = rating.length - pStr.length;
+		while (pStr !== "") {
+			for (let i = 0; i < Number(pStr.charAt(0)); i++) {
+				result += rating[lv];
+			}
+			lv++;
+			pStr = pStr.slice(1);
+		}
+		if (result === "") result = "HP가 없습니다 :(";
+		return result;
 	}
 
 	private loadData() {

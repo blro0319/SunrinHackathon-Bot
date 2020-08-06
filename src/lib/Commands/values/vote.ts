@@ -1,9 +1,6 @@
 import { Command } from "../type";
-import { Message, Collection, MessageEmbed, User, ReactionCollector, MessageReaction } from "discord.js";
-import roles = require("../../GuildData/Roles.json");
+import { Message, MessageEmbed, User, MessageReaction } from "discord.js";
 import { replyMessage } from "../../..";
-import voteList = require("../data/vote/list.json");
-import voteResult = require("../data/vote/result.json");
 
 export interface IVoteItem {
 	emoji?: string;
@@ -34,22 +31,17 @@ export default new Command("vote", (message: Message, args: string[]) => {
 		case "만들기":
 			createVote(message, args.slice(1).join(" "));
 			break;
-		case "close":
-		case "종료":
-		case "끝내기":
-			closeVote(args.slice(1).join(" "));
-			break;
 		default:
 			replyMessage(message, `\`${args[0]}\`은 알맞은 형식의 인자가 아닙니다. \`create\` 또는 \`close\`로 적어주세요!`);
 			break;
 	}
 }, {
 	aliases: ["투표"],
-	description: "새로운 투표를 만들거나 기존 투표를 종료합니다.",
+	description: "새로운 투표를 만들어 진행합니다.",
 	enable: true,
 	minArgumentCount: 2,
 	showHelp: true,
-	usage: `<"create"|"생성"|"만들기"|"close"|"종료"|"끝내기"> <이름>`,
+	usage: `<"create"|"생성"|"만들기"> <이름>`,
 	permissions: {
 		roles: []
 	}
@@ -204,7 +196,7 @@ async function createVote(message: Message, name: string) {
 							vote: vote,
 							reactions: new Map<string, IVoteReaction>()
 						};
-						// 
+						// Add reaction data
 						value.forEach((reaction, key) => {
 							result.reactions.set(key, {
 								title: vote.items.find((value) => value.emoji === key).title,
@@ -215,16 +207,16 @@ async function createVote(message: Message, name: string) {
 								if (!user.bot) result.reactions.get(key).users.push(user);
 							})
 						});
+
+						// Delete before
 						msg.delete();
+						// Send result
 						message.channel.send(createVoteResult(result));
 					})
 				});
 			}).catch(voteCatch);
 		}).catch(voteCatch);
 	}).catch(voteCatch);
-}
-function closeVote(name: string) {
-	console.log(voteList[name]);
 }
 
 function createVoteMessage(vote: IVote): MessageEmbed {

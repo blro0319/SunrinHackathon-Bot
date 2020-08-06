@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const type_1 = require("../type");
 const discord_js_1 = require("discord.js");
 const __1 = require("../../..");
-const voteList = require("../data/vote/list.json");
 exports.default = new type_1.Command("vote", (message, args) => {
     switch (args[0]) {
         case "create":
@@ -20,22 +19,17 @@ exports.default = new type_1.Command("vote", (message, args) => {
         case "만들기":
             createVote(message, args.slice(1).join(" "));
             break;
-        case "close":
-        case "종료":
-        case "끝내기":
-            closeVote(args.slice(1).join(" "));
-            break;
         default:
             __1.replyMessage(message, `\`${args[0]}\`은 알맞은 형식의 인자가 아닙니다. \`create\` 또는 \`close\`로 적어주세요!`);
             break;
     }
 }, {
     aliases: ["투표"],
-    description: "새로운 투표를 만들거나 기존 투표를 종료합니다.",
+    description: "새로운 투표를 만들어 진행합니다.",
     enable: true,
     minArgumentCount: 2,
     showHelp: true,
-    usage: `<"create"|"생성"|"만들기"|"close"|"종료"|"끝내기"> <이름>`,
+    usage: `<"create"|"생성"|"만들기"> <이름>`,
     permissions: {
         roles: []
     }
@@ -180,7 +174,7 @@ function createVote(message, name) {
                                 vote: vote,
                                 reactions: new Map()
                             };
-                            // 
+                            // Add reaction data
                             value.forEach((reaction, key) => {
                                 result.reactions.set(key, {
                                     title: vote.items.find((value) => value.emoji === key).title,
@@ -192,7 +186,9 @@ function createVote(message, name) {
                                         result.reactions.get(key).users.push(user);
                                 });
                             });
+                            // Delete before
                             msg.delete();
+                            // Send result
                             message.channel.send(createVoteResult(result));
                         });
                     });
@@ -200,9 +196,6 @@ function createVote(message, name) {
             }).catch(voteCatch);
         }).catch(voteCatch);
     });
-}
-function closeVote(name) {
-    console.log(voteList[name]);
 }
 function createVoteMessage(vote) {
     let embed = new discord_js_1.MessageEmbed()
