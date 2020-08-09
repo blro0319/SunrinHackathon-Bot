@@ -6,14 +6,20 @@ const __1 = require("../../..");
 const teams = require("../../Teams/teams.json");
 const discord_js_1 = require("discord.js");
 exports.default = new type_1.Command("team", (message, args) => {
-    switch (args[0].toLowerCase()) {
-        case "color":
-        case "색":
-            changeTeamColor(message, args[1], args[2]);
-            break;
-        default:
-            showTeamInfo(message, args[0]);
-            break;
+    if (args[0] && args[0].toLowerCase()) {
+        switch (args[0]) {
+            case "color":
+            case "색":
+                if (args[1] && args[2])
+                    changeTeamColor(message, args[1], args[2]);
+                break;
+            default:
+                showTeamInfo(message, args[0]);
+                break;
+        }
+    }
+    else {
+        showTeamInfo(message, null);
     }
 }, {
     aliases: ["팀"],
@@ -23,7 +29,7 @@ exports.default = new type_1.Command("team", (message, args) => {
     showHelp: true,
     usage: [
         "[이름|멘션]",
-        `<"color"|"색"> <이름|멘션> <색상 코드:'#000000'>`
+        `<"color"|"색"> <이름|멘션> <색상 코드:'ex) #000000'>`
     ]
 });
 // Change taem role color

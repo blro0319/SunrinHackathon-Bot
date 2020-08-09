@@ -32,9 +32,9 @@ exports.default = new type_1.Command("point", (message, args) => {
     minArgumentCount: 2,
     showHelp: true,
     usage: [
-        '<"set"|"설정"|"변경"> <HP>',
-        '<"add"|"추가"> <HP>',
-        '<"get"|"보기">'
+        '<"set"|"설정"|"변경"> <이름|멘션> <HP>',
+        '<"add"|"추가"> <이름|멘션> <HP>',
+        '<"get"|"보기"> <이름|멘션>'
     ],
     permissions: {
         roles: [roles.admin, roles.staff]

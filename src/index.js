@@ -57,6 +57,8 @@ function detectAddMember(member) {
         return;
     // New member is player
     console.log(`[Guild][user] ${member.user.tag} is player: ${teamData.name}: ${userData.name}_${userData.role}`);
+    // Change nickname
+    member.setNickname(userData.name);
     // Add roles
     let guildRoles = member.guild.roles.cache;
     member.roles.add(guildRoles.find(value => value.id === roles.player));

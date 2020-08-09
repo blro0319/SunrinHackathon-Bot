@@ -39,6 +39,8 @@ function getCommandUsage(command) {
     command.options.usage.forEach((value) => {
         usage += `\`${config_json_1.prefix}${command.name} ${value}\`\n`;
     });
+    if (usage === "")
+        usage = `\`${config_json_1.prefix}${command.name}\`\n`;
     if (command.options.aliases.length) {
         usage += "별명: `";
         for (let i = 0; i < command.options.aliases.length; i++) {

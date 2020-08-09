@@ -16,6 +16,7 @@ class CommandManager {
             this.message = this.cmdName = this.cmdArgs = this.command = null;
             return;
         }
+        console.log(`[Command][excute] ${message.author.tag}: ${message.content}`);
         if (!this.checkArgs()) {
             return;
         }

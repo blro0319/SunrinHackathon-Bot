@@ -38,6 +38,7 @@ export function getCommandUsage(command: Command): string {
 	command.options.usage.forEach((value) => {
 		usage += `\`${prefix}${command.name} ${value}\`\n`;
 	});
+	if (usage === "") usage = `\`${prefix}${command.name}\`\n`;
 	if (command.options.aliases.length) {
 		usage += "별명: `";
 		for (let i = 0; i < command.options.aliases.length; i++) {
